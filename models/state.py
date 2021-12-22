@@ -8,7 +8,7 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """ State class """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
@@ -18,7 +18,7 @@ class State(BaseModel):
     def cities(self):
         """getter method
         Returns:
-            list: returns the list of City instances with state_id equals
+            list: list of City instances with state_id equals
                   to the current State.id
         """
         cities_list = []
