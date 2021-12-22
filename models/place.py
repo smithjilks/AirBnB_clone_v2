@@ -6,6 +6,13 @@ from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, ForeignKey, String, Integer, Float, Table
 
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60),
+                             ForeignKey('places.id'),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey('amenities.id'),
+                             primary_key=True, nullable=False))
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -62,3 +69,11 @@ class Place(BaseModel, Base):
                 if amenity.place_id == self.id:
                     amenity_list.append(amenity)
             return amenity_list
+
+        @amenities.setter
+        def amenities(self, obj=None):
+            """Set amenity_ids
+            """
+            if type(obj).__name__ == 'Amenity':
+                new_amenity = 'Amenity' + '.' + obj.id
+                self.amenity_ids.append(new_amenity)
