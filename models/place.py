@@ -21,11 +21,9 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        reviews = relationship("Review",
-                               backref="place",
+        reviews = relationship("Review", backref="place",
                                cascade="all, delete, delete-orphan")
-        amenities = relationship("Amenity",
-                                 secondary=place_amenity,
+        amenities = relationship("Amenity", secondary=place_amenity,
                                  viewonly=False)
     else:
         city_id = ""
@@ -39,3 +37,28 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+    def __init__(self, *args, **kwargs):
+        """initializes Place"""
+        super().__init__(*args, **kwargs)
+
+    if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+        @property
+        def reviews(self):
+            """getter method to return Review instances"""
+            from models.review import Review
+            review_list = []
+            for review in models.storage.all(Review).values():
+                if review.place_id == self.id:
+                    review_list.append(review)
+            return review_list
+
+        @property
+        def amenities(self):
+            """getter method to return Amenity instances"""
+            from models.amenity import Amenity
+            amenity_list = []
+            for amenity in models.storage.all(Amenity).values():
+                if amenity.place_id == self.id:
+                    amenity_list.append(amenity)
+            return amenity_list
